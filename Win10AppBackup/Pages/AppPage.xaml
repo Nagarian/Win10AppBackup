@@ -1,0 +1,130 @@
+﻿<UserControl x:Class="Win10AppBackup.Pages.AppPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converter="clr-namespace:Win10AppBackup.Utils.Converters"
+             xmlns:local="clr-namespace:Win10AppBackup"
+             xmlns:page="clr-namespace:Win10AppBackup.Pages"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="650">
+
+    <d:UserControl.DataContext>
+        <page:MainWindowViewModel/>
+    </d:UserControl.DataContext>
+
+    <UserControl.Resources>
+        <converter:BooleanToVisibilityConverter x:Key="boolConv" />
+        <converter:NegativeBooleanToVisibilityConverter x:Key="negativeBoolConv"/>
+        <converter:BackupStateConverter x:Key="oldBackupConv"/>
+        <Style x:Key="textStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ListView x:Name="listView" AlternationCount="2" ItemsSource="{Binding Packages, Mode=OneWay}" Padding="30,10,30,0" Background="Transparent" BorderThickness="0">
+        <!--<ListView.Background>
+                <SolidColorBrush Color="{Binding Source={x:Static local:SystemColor.StartMenuBackground}}" />
+            </ListView.Background>-->
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Height="50" HorizontalAlignment="Right">
+                        <Border.Background>
+                            <SolidColorBrush Color="{Binding Source={x:Static local:SystemColor.StartMenuTilesBackground}, Mode=OneWay}"/>
+                        </Border.Background>
+                        <Image Source="{Binding Icon, Mode=OneTime}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource textStyle}" TextWrapping="Wrap">
+                            <Run Text="{Binding DisplayName, Mode=OneTime}"/>
+                            <Span DataContext="{Binding Version, Mode=OneTime}" FontSize="11">
+                                <Run Text=" ("/>
+                                <Run Text="{Binding Major, Mode=OneTime}" />
+                                <Run Text="." />
+                                <Run Text="{Binding Minor, Mode=OneTime}" />
+                                <Run Text="." />
+                                <Run Text="{Binding Build, Mode=OneTime}" />
+                                <Run Text="." />
+                                <Run Text="{Binding Revision, Mode=OneTime}" />
+                                <Run Text=")"/>
+                            </Span>
+                            <InlineUIContainer>
+                                <TextBlock Text=" /!\" Foreground="Red" ToolTip="Your last backup is outdated" Visibility="{Binding Backup.State, Converter={StaticResource oldBackupConv}, Mode=OneWay}" />
+                            </InlineUIContainer>
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource textStyle}" TextWrapping="Wrap" FontSize="12">
+                            <Run Text="Installed on" />
+                            <Run Text="{Binding InstalledDate, StringFormat=f, Mode=OneWay}" />
+                        </TextBlock>
+                        <Grid Visibility="{Binding Backup.IsBackuped, Converter={StaticResource boolConv}, Mode=OneWay}">
+                            <TextBlock Style="{StaticResource textStyle}" TextWrapping="Wrap" FontSize="12"
+                                   Visibility="{Binding Backup.IsBusy, Converter={StaticResource negativeBoolConv}, Mode=OneWay}">
+                            <Run Text="Backuped on" />
+                            <Run Text="{Binding Backup.BackupDate, StringFormat=f, Mode=OneWay}" />
+                            </TextBlock>
+                        </Grid>
+                        <ProgressBar IsIndeterminate="True" Visibility="{Binding Backup.IsBusy, Converter={StaticResource boolConv}, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <!--<TextBlock Grid.Column="2" Style="{StaticResource textStyle}" Margin="10,0,20,0">
+                            <Span DataContext="{Binding Version, Mode=OneTime}" d:FontSize="12">    
+                                <Run Text="{Binding Major, Mode=OneTime}" />
+                                <Run Text="." />
+                                <Run Text="{Binding Minor, Mode=OneTime}" />
+                                <Run Text="." />
+                                <Run Text="{Binding Build, Mode=OneTime}" />
+                                <Run Text="." />
+                                <Run Text="{Binding Revision, Mode=OneTime}" />
+                            </Span>
+                    </TextBlock>-->
+
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" FlowDirection="RightToLeft"
+                                IsEnabled="{Binding !Backup.IsBusy}"
+                                Visibility="{Binding AppDataFolderExists, Converter={StaticResource boolConv}}">
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource textStyle}">
+                                <Setter Property="FontSize" Value="18" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button Style="{DynamicResource ListViewButtonStyle}" ToolTip="Backup" Click="BackupClick"
+                                Visibility="{Binding Backup.IsBackuped, Converter={StaticResource negativeBoolConv}, Mode=OneWay}">
+                            <TextBlock Text="&#xE8F4;" />
+                        </Button>
+                        <Button Style="{DynamicResource ListViewButtonStyle}" ToolTip="Update Backup" Click="BackupClick"
+                                Visibility="{Binding Backup.IsBackuped, Converter={StaticResource boolConv}, Mode=OneWay}">
+                            <TextBlock Text="&#xE8F7;" />
+                        </Button>
+                        <Button Style="{DynamicResource ListViewButtonStyle}" ToolTip="Restore Backup" Click="RestoreClick"
+                                Visibility="{Binding Backup.IsBackuped, Converter={StaticResource boolConv}, Mode=OneWay}">
+                            <TextBlock Text="&#xE19C;"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Style.Triggers>
+                    <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Foreground" Value="Black" />
+                    </Trigger>
+                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                        <Setter Property="Foreground" Value="{StaticResource StartMenuForeground}" />
+                        <Setter Property="Background"  Value="{StaticResource StartMenuBackground}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ListView.ItemContainerStyle>
+    </ListView>
+</UserControl>

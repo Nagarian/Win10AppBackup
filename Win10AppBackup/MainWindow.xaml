@@ -1,0 +1,131 @@
+﻿<Window x:Class="Win10AppBackup.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Win10AppBackup"
+        xmlns:page="clr-namespace:Win10AppBackup.Pages"
+        xmlns:sysloc="clr-namespace:Win10AppBackup"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="550" Width="800" d:Style="{DynamicResource WindowStyle1}">
+    <!--<Window.Background>
+        <SolidColorBrush Color="{Binding Source={x:Static local:SystemColor.StartMenuBackground}}" Opacity="0.5"/>
+    </Window.Background>-->
+    <Window.Resources>
+        <Style x:Key="WindowStyle1" TargetType="{x:Type Window}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static local:SystemColor.StartMenuForeground}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Window}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                            <AdornerDecorator>
+                                <ContentPresenter/>
+                            </AdornerDecorator>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="ResizeMode" Value="CanResizeWithGrip">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Window}">
+                                <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                                    <Grid>
+                                        <AdornerDecorator>
+                                            <ContentPresenter/>
+                                        </AdornerDecorator>
+                                        <ResizeGrip x:Name="WindowResizeGrip" HorizontalAlignment="Right" IsTabStop="false" Visibility="Collapsed" VerticalAlignment="Bottom"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="ResizeMode" Value="CanResizeWithGrip"/>
+                                            <Condition Property="WindowState" Value="Normal"/>
+                                        </MultiTrigger.Conditions>
+                                        <Setter Property="Visibility" TargetName="WindowResizeGrip" Value="Visible"/>
+                                    </MultiTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="HeaderButtonStyle" TargetType="{x:Type RadioButton}">
+            <Setter Property="FocusVisualStyle">
+                <Setter.Value>
+                    <Style>
+                        <Setter Property="Control.Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Padding" Value="0,0,10,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="FontWeight" Value="Thin"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Grid x:Name="templateRoot" Background="Transparent" SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="contentPresenter" Grid.Column="1" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Foreground" Value="{StaticResource StartMenuBackground}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Foreground" Value="{StaticResource TileBakgroundColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Setter Property="Foreground" Value="{StaticResource TileBakgroundColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!--<Grid.Background>
+            <SolidColorBrush Color="{Binding Source={x:Static local:SystemColor.StartMenuBackground}}" Opacity="0.5"/>
+        </Grid.Background>-->
+        <!--<Grid.Background>
+            <ImageBrush ImageSource="shingeki-no-kyojin-birth-of-levi-kuinaki-sentaku-5043955.jpg"/>
+        </Grid.Background>-->
+
+        <StackPanel Orientation="Horizontal" Margin="30,15,30,0">
+            <RadioButton Style="{StaticResource HeaderButtonStyle}" Checked="RadioButton_Checked" IsChecked="True">
+                <TextBlock Text="Application" FontSize="20"/>
+                <RadioButton.Tag>
+                    <page:AppPage />
+                </RadioButton.Tag>
+            </RadioButton>
+            <RadioButton Style="{StaticResource HeaderButtonStyle}" Checked="RadioButton_Checked">
+                <TextBlock Text="Settings" FontSize="20"/>
+                <RadioButton.Tag>
+                    <page:SettingsPage/>
+                </RadioButton.Tag>
+            </RadioButton>
+        </StackPanel>
+        
+        <ContentControl x:Name="frame" Grid.Row="1" />
+
+    </Grid>
+</Window>
